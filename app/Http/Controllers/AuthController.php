@@ -17,8 +17,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use OpenApi\Annotations as OA;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
+/**
+ * @OA\Info(
+ *    title="Laravel API",
+ *    description="API documentation",
+ *    version="1.0.0",
+ * )
+ */
 class AuthController extends Controller
 {
     protected TwoFactorService $twoFactorService;
@@ -29,7 +37,53 @@ class AuthController extends Controller
         $this->middleware('auth:api')->except(['register', 'login', 'refreshToken', 'verifyEmail', 'forgotPassword', 'resetPassword', 'verify2FA']);
     }
 
-    public function register(Request $request): JsonResponse
+    /**
+     * Register
+     * @OA\Post (
+     *     path="/api/register",
+     *     tags={"Auth"},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                      type="object",
+     *                      @OA\Property(
+     *                          property="name",
+     *                          type="string"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="email",
+     *                          type="string"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="password",
+     *                          type="string"
+     *                      )
+     *                 ),
+     *                 example={
+     *                     "name":"John",
+     *                     "email":"john@test.com",
+     *                     "password":"johnjohn1"
+     *                }
+     *             )
+     *         )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Success",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="meta", type="object",
+     *                  @OA\Property(property="code", type="number", example=200),
+     *                  @OA\Property(property="status", type="string", example="success"),
+     *                  @OA\Property(property="message", type="string", example=null),
+     *              ),
+     *          )
+     *      ),
+     *    )
+     * )
+     */
+    final function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
