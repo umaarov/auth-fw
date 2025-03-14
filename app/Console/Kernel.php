@@ -7,13 +7,13 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-    protected function schedule(Schedule $schedule): void
+    final function schedule(Schedule $schedule): void
     {
         $schedule->command('auth:prune-sessions')->daily();
         $schedule->command('auth:unlock-accounts')->everyFiveMinutes();
     }
 
-    protected function commands(): void
+    final function commands(): void
     {
         $this->load(__DIR__ . '/Commands');
         require base_path('routes/console.php');

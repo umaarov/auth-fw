@@ -10,13 +10,13 @@ use App\Models\User;
 use App\Notifications\SuspiciousLogin;
 use App\Services\TwoFactorService;
 use Carbon\Carbon;
-use DB;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Str;
+use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
@@ -56,7 +56,7 @@ class AuthController extends Controller
         return response()->json(['message' => 'User created successfully. Please verify your email.', 'user' => $user->only(['name', 'email', 'created_at'])], 201);
     }
 
-    public function verifyEmail(Request $request): JsonResponse
+    final function verifyEmail(Request $request): JsonResponse
     {
         $user = User::where('verification_token', $request->token)->first();
 
@@ -72,7 +72,7 @@ class AuthController extends Controller
         return response()->json(['message' => 'Email verified successfully']);
     }
 
-    public function login(Request $request): JsonResponse
+    final function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
@@ -322,7 +322,7 @@ class AuthController extends Controller
         return response()->json(['message' => 'Profile updated successfully', 'user' => $user]);
     }
 
-    protected function respondWithToken($token, $user, Request $request): JsonResponse
+    final function respondWithToken($token, $user, Request $request): JsonResponse
     {
         $session = SessionToken::create([
             'user_id' => $user->id,

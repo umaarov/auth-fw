@@ -15,18 +15,23 @@ class SessionToken extends Model
     protected $casts = [
         'last_activity' => 'datetime',
     ];
+    private mixed $token;
 
-    public function user(): BelongsTo
+    public static function create(array $array)
+    {
+    }
+
+    final function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function scopeActive($query)
+    final function scopeActive($query)
     {
         return $query->where('last_activity', '>=', now()->subDays(30));
     }
 
-    public function isCurrentSession(): bool
+    final function isCurrentSession(): bool
     {
         return $this->token === (string)request()->bearerToken();
     }
